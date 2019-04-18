@@ -2,7 +2,7 @@
 import re
 import socket
 
-from definitions import definitions
+from .definitions import definitions
 
 
 TEMPLATE = '%s SPAMC/1.5\r\nContent-length: %s\r\n\r\n%s\r\n\r\n'
@@ -42,7 +42,7 @@ def _process_request(server, port, payload):
         spamd_socket.connect((server, port))
 
         # send the payload
-        spamd_socket.sendall(payload)
+        spamd_socket.sendall(payload.encode())
 
         # get the result
         result = spamd_socket.recv(1024)
@@ -56,8 +56,6 @@ def _process_request(server, port, payload):
 
         # return the result
         return result
-    except:
-        return None
     finally:
         if spamd_socket:
             # close the socket
@@ -65,6 +63,7 @@ def _process_request(server, port, payload):
 
 
 def parse(report_type, scan_result):
+    # type: (str, bytes) -> dict
     """
     Parses the result of the raw Spam Assassin
     reply. A bunch of regex mess, but gets the job done!
@@ -73,6 +72,8 @@ def parse(report_type, scan_result):
                         'SYMBOLS'.
     :param scan_result: the raw result from the scan.
     """
+    scan_result = scan_result.decode()
+
     # capture content length
     content_length_re = re.compile(r'Content-length: ([0-9]{1,10})')
     content_length = re.search(content_length_re, scan_result).group(1)

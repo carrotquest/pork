@@ -11,15 +11,16 @@
 """
 
 from flask import Flask, request, jsonify
-from lib.spamassassin import client
 
+from . import config
+from .lib.spamassassin import client
 
 app = Flask(__name__)
 
 # define the SpamAssassin server and port here
 app.config.update({
-    "SPAMD_SERVER": "127.0.0.1",
-    "SPAMD_PORT": 783
+    "SPAMD_SERVER": config.SPAMD_HOST,
+    "SPAMD_PORT": config.SPAMD_PORT
 })
 
 
@@ -79,4 +80,3 @@ def mime_is_spam():
     response.status_code = 400
     return response
 
-app.run(debug=True)

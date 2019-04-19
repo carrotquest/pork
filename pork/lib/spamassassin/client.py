@@ -72,7 +72,7 @@ def parse(report_type, scan_result):
                         'SYMBOLS'.
     :param scan_result: the raw result from the scan.
     """
-    scan_result = scan_result.decode()
+    scan_result = scan_result.decode(errors='ignore')
 
     # capture content length
     content_length_re = re.compile(r'Content-length: ([0-9]{1,10})')
